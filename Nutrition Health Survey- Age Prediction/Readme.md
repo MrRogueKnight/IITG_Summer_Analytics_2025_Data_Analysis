@@ -1,119 +1,166 @@
-# 🧠 Nutrition Health Survey - Age Prediction
-
-### Summer Analytics 2025, IIT Guwahati
+# 🧠 Nutrition Health Survey – Age Prediction  
+---
+## 🎓 Summer Analytics 2025 – IIT Guwahati
 
 *Organized by the Consulting and Analytics Club, IIT Guwahati*
 
------
+📊 **Project:** Nutrition & Health Survey – Age Group Prediction
 
-## 📋 About This Project
+🔗 **Kaggle Notebook:** [View on Kaggle](https://www.kaggle.com/code/mrrogueknight/nutrition-health-survey-age-prediction)
 
-The National Health and Nutrition Examination Survey (NHANES) is a nationally representative health study conducted by the CDC’s National Center for Health Statistics. It uniquely combines interviews, physical exams, and lab tests to assess the health and nutritional status of U.S. children and adults.
+---
 
-This dataset is a **subset, focused part of the NHANES study by CDC**, which looks at health and nutrition trends in the U.S. It has **6,287 entries and 7 key features**, covering things like body stats, lifestyle, and lab results. The task is simple: predict if a person is a senior (65+) or not. NHANES collected data through home visits, mobile clinics, and lab tests, giving a good mix of real and reported info. This trimmed version keeps only what’s needed, making it perfect for health-based age prediction.
+## 📋 Overview
 
-This Hackathon is in collaboration with **Consulting and Analytics Club, IIT Guwahati** for **Summer Analytics 2025**.
+This challenge is based on a simplified subset of the **National Health and Nutrition Examination Survey (NHANES)** — a nationwide study conducted by the **CDC's National Center for Health Statistics**. NHANES uniquely combines **interviews, physical exams, and lab tests** to evaluate the health and nutrition of people in the U.S.
 
------
+You're provided with a focused dataset of **selected health indicators** for over 2,300 individuals. Your task is to develop a **binary classification model** to predict whether a person is a **Senior (65+ years old)** or an **Adult (under 65 years)** based on these features.
 
-## 🧾 Dataset Description
+---
 
-The data contains two primary files: `train.csv` and `test.csv`.
+## 🧠 Problem Statement
 
-  - **`train.csv`**: This file contains the training set observations, comprising **2,016 rows**. It includes all 7 features along with the target variable (`age_group`), which should be used for training your model.
-  - **`test.csv`**: This file contains the testing set observations, with **312 rows**. It includes the same 7 features as `train.csv`, but the target column (`age_group`) is missing. You will use your trained model to predict these missing `age_group` values.
+Build a binary classifier to predict the `age_group` of individuals based on their health profile.
 
-Additionally, a **`sample-submission.csv`** file is provided to illustrate the required format for your submission. Note that the header must include 'age\_group' as the column name, and the number of rows should match the number of rows in the test set.
+- `age_group = 0` → Adult (under 65 years)
+- `age_group = 1` → Senior (65 years and above)
 
-### Target Variable: `age_group`
+Note: In the training data, this field is stored as text — `'Adult'` and `'Senior'`. You'll need to map them to integers before modeling:
 
-The task is to predict whether a person is a Senior (65+ years old) or an Adult (\<65 years old).
-\*\*It is crucial to map 'Adult' to `0` and 'Senior`to`1`in your predictions.** Your submission file will only accept values`0`or`1\`.
+```python
+'Adult' → 0  
+'Senior' → 1
+```
 
-| Label      | Meaning |
-|-----------|---------|
-| `0`       | Adult (\< 65 years) |
-| `1`       | Senior (65+ years) |
+---
 
-### Features:
+## 📁 Files Provided
 
-The dataset contains the following features:
+| File                    | Description                                                                 |
+|-------------------------|-----------------------------------------------------------------------------|
+| `Train_Data.csv`        | 2,016 rows with 7 features and the target column `age_group`                |
+| `Test_Data.csv`         | 312 rows with 7 features but no target column                               |
+| `Sample_Submission.csv` | Example format for your submission (`SEQN`, `age_group`)                    |
 
-| Column    | Description |
-|------------|-------------|
-| `SEQN`     | Sequence number (identifier) |
-| `RIAGENDR` | Respondent's Gender (1 = Male, 2 = Female) |
-| `PAQ605`   | Physical activity questionnaire response: If the respondent engages in moderate or vigorous-intensity sports, fitness, or recreational activities in the typical week |
-| `BMXBMI`   | Body Mass Index |
-| `LBXGLU`   | Glucose level |
-| `DIQ010`   | Diabetes questionnaire response |
-| `LBXGLT`   | Glucose tolerance (Oral) |
-| `LBXIN`    | Insulin level |
+> 📝 Use the training data to build and validate your model. Then use the test data for predictions.
 
-> ⚠️ **Note on Missing Values:** The dataset may contain missing values (`NaN`) which should be handled appropriately during your data preprocessing.
+---
 
------
+## 🔍 Feature Description
 
-## 🧠 Objective
+| Column     | Description                                                                 |
+|------------|-----------------------------------------------------------------------------|
+| `SEQN`     | Unique identifier for each respondent                                       |
+| `RIAGENDR` | Gender (1 = Male, 2 = Female)                                                |
+| `PAQ605`   | Physical activity (moderate/vigorous activity in a typical week)            |
+| `BMXBMI`   | Body Mass Index                                                             |
+| `LBXGLU`   | Glucose Level                                                                |
+| `DIQ010`   | Diabetes questionnaire response                                              |
+| `LBXGLT`   | Oral Glucose Tolerance                                                      |
+| `LBXIN`    | Insulin Level                                                               |
 
-Build a **classification model** to predict whether a person is a **Senior (1)** or an **Adult (0)** based on health indicators. Use `train.csv` for training and make predictions on `test.csv`.
+> ⚠️ Missing values (`NaN`) may be present. Handle them with imputation or removal.
 
------
+---
 
-## 📊 Evaluation Metric
+## 🎯 Target Variable – `age_group`
 
-Submissions are evaluated using the **F1 Score**.
+Your task is to predict this column for each entry in `Test_Data.csv`.
 
-> F1 Score balances **Precision** and **Recall**, making it ideal for imbalanced classes.
+| Value | Description         |
+|--------|----------------------|
+| `0`    | Adult (under 65)     |
+| `1`    | Senior (65 and above)|
 
-For clarity, here's how the F1 Score is calculated:
+✅ Your final predictions must contain **only** 0 or 1 values.
 
------
+---
 
-## 🚀 Submission Guidelines
+## 🧪 Evaluation Metric – F1 Score
 
-1.  Train your model using `train.csv`.
-2.  Predict the `age_group` for each entry in `test.csv`.
-3.  Ensure your output format matches `sample-submission.csv`. Your submission file should have two columns: `SEQN` and `age_group`.
-4.  Only labels `0` or `1` are accepted in the `age_group` column.
-5.  Submit your `.csv` file through the platform.
+Submissions are evaluated using the **F1 Score**, which balances precision and recall — ideal for imbalanced classes.
 
-Here's an example of the expected submission format:
+**Formula:**
 
-> ✅ **Make sure to mark your submission as FINAL** to appear on the **Private Leaderboard**.
+> F1 = 2 × (Precision × Recall) / (Precision + Recall)
 
------
+Where:
+- **Precision** = TP / (TP + FP)
+- **Recall** = TP / (TP + FN)
 
-## 🧪 Evaluation Procedure
+📘 Learn more: [https://en.wikipedia.org/wiki/F1_score](https://en.wikipedia.org/wiki/F1_score)
 
-  - **Public Leaderboard**: Evaluated on \~50% of the test set.
-  - **Private Leaderboard**: Final score calculated on the remaining 50%.
-  - **In case of tied scores, the top-5 participants will be further evaluated and ranked based on their Feature Engineering and Exploratory Data Analysis (EDA) approach.**
+---
 
------
+## ⚙️ How the Challenge Works
+
+1. **Train** your model on `Train_Data.csv`.
+2. **Predict** `age_group` for `Test_Data.csv`.
+3. **Submit** your results in the exact format below:
+
+```csv
+SEQN,age_group
+12345,0
+67890,1
+...
+```
+
+4. **Leaderboard**:
+   - **Public Leaderboard**: Based on ~50% of the test set.
+   - **Private Leaderboard**: Based on the remaining 50%.
+
+5. **Tie-Breaker**:  
+   In case of a tie, the top-5 participants will be judged based on the **quality of their Feature Engineering and EDA**.
+
+6. ✅ **Mark your best submission as FINAL** to be considered for private leaderboard rankings.
+
+---
+
+## ✅ Submission Checklist
+
+- [x] Train your model using `Train_Data.csv`
+- [x] Predict `age_group` (0 or 1) for all entries in `Test_Data.csv`
+- [x] Submit a CSV with exactly two columns: `SEQN`, `age_group`
+- [x] Ensure `age_group` predictions are integers (0 or 1 only)
+- [x] Mark your best submission as **FINAL**
+
+---
+
+## 🧼 Data Notes & Modeling Tips
+
+- Handle missing values properly (`mean`, `median`, or more advanced methods)
+- Feature scaling may help, especially for glucose and insulin levels
+- Try different models:
+  - Logistic Regression
+  - Random Forest
+  - XGBoost (✅ officially allowed)
+- Cross-validate your model (e.g., Stratified K-Fold)
+- Explore class imbalance handling (`scale_pos_weight`, `class_weight`, SMOTE)
+
+---
 
 ## 📝 Disclaimer
 
-This dataset is derived and pre-processed from the original NHANES data by the CDC. It has been modified for educational purposes in this hackathon, focusing on classification, EDA, and feature engineering skills.
+This dataset is derived from the NHANES data provided by the CDC. It has been preprocessed and simplified for educational use.  
+We do **not** claim ownership of the original dataset.
 
-We do not claim ownership over the original dataset.
+---
 
------
+## 👨‍💻 Maintainers
 
-## 👨‍💻 Maintainers & Credits
-
-Organized by the **Consulting and Analytics Club**,  
+Hosted by:  
+**Consulting and Analytics Club**  
 **Indian Institute of Technology (IIT) Guwahati**
 
------
+---
 
 ## 📚 References
 
-  - NHANES Data: [https://www.cdc.gov/nchs/nhanes](https://www.cdc.gov/nchs/nhanes)
-  - F1 Score: [Wikipedia - F1 Score](https://en.wikipedia.org/wiki/F1_score)
+- [NHANES Official Website](https://www.cdc.gov/nchs/nhanes)
+- [F1 Score – Wikipedia](https://en.wikipedia.org/wiki/F1_score)
 
------
+---
 
 ## 📌 License
 
-This project is intended for **educational use only**. Please refer to the original NHANES dataset license for data usage terms.
+This project is intended for **educational purposes only**. Please refer to NHANES’ official licensing terms for external use.
