@@ -1,119 +1,108 @@
+# 🌿 NDVI-based Land Cover Classification  
+**Summer Analytics 2025 Hackathon – IIT Guwahati x GeeksforGeeks**
 
------
+This repository contains my solution to the **Mid Hackathon** of **Summer Analytics 2025**, hosted by the **Consulting & Analytics Club (CAC), IIT Guwahati**, in collaboration with **GeeksforGeeks (GFG)**. The task involved classifying land cover types from noisy satellite-based NDVI time-series data using **only Logistic Regression**.
 
-# Summer Analytics First Hackathon: NDVI-based Land Cover Classification
+---
 
------
+## 📌 Table of Contents
 
-## 🌟 Overview
+- [🧠 Problem Statement](#-problem-statement)
+- [📊 Competition Overview](#-competition-overview)
+- [🗂️ Dataset Description](#️-dataset-description)
+- [🧪 Approach & Methodology](#-approach--methodology)
+- [⚙️ Model Details](#️-model-details)
+- [📤 Submission Format](#-submission-format)
+- [📈 Results](#-results)
+- [🔗 Useful Links](#-useful-links)
 
-Welcome to the **First Course Hackathon of Summer Analytics 2025**\! This exciting event, hosted by the **Consulting & Analytics Club** and **GeeksforGeeks (GFG)**, challenges you to classify land cover types using **NDVI time-series data** from satellite imagery and OpenStreetMap (OSM) labels.
+---
 
-**🔗 Hackathon Link:** [https://www.kaggle.com/competitions/summer-analytics-mid-hackathon/overview](https://www.kaggle.com/competitions/summer-analytics-mid-hackathon/overview)
+## 🧠 Problem Statement
 
-Your primary goal is to build a **Logistic Regression model** that accurately predicts land cover classes despite the inherent noise in the NDVI signals. Top performers stand a chance to win **GFG Premium memberships**, and all participants will receive **exclusive discounts**\!
+Participants were asked to build a **Logistic Regression model** to classify land into one of six classes using NDVI time-series data derived from satellite imagery.
 
------
+### 🌍 Target Classes:
+- `Water`
+- `Impervious`
+- `Farm`
+- `Forest`
+- `Grass`
+- `Orchard`
 
-## 🎯 The Challenge: NDVI-based Land Cover Classification
+### ⚠️ Constraints:
+- **Model:** Logistic Regression only (multiclass)
+- **Metric:** Accuracy Score
+- **Challenge:** High noise due to cloud cover and digitization errors
 
-### Key Concepts
+---
 
-1.  **NDVI (Normalized Difference Vegetation Index)**
-    The NDVI is a crucial metric for measuring vegetation health using satellite data. It's calculated as:
+## 📊 Competition Overview
 
-    $$
-    $$$$\\text{NDVI} = \\frac{\\text{NIR} - \\text{RED}}{\\text{NIR} + \\text{RED}}
+| Metric                  | Value                |
+|-------------------------|----------------------|
+| 👥 Total Participants   | 1,395                |
+| 📤 Total Submissions    | 6,504                |
+| 📈 Public Leaderboard   | **Rank 56 / 1,395**   |
+| 🔐 Private Leaderboard  | **Rank 192 / 1,395**  |
+| 🏆 Awards               | Kudos (Non-rated)     |
 
-    $$
-    $$$$Where:
+---
 
-      * **NIR** = Near-Infrared reflectance
-      * **RED** = Red reflectance
+## 🗂️ Dataset Description
 
-2.  **Data Challenges**
-    The dataset presents several real-world complexities you'll need to address:
+The dataset includes time-series NDVI values for various land patches.
 
-      * **Noise**: Both the satellite imagery and crowdsourced data contain noise, stemming from factors like cloud cover in images and inaccuracies in OpenStreetMap (OSM) labeling/digitization of polygons.
-      * **Missing Data**: Certain NDVI values are missing due to cloud cover obstructing satellite views.
-      * **Temporal Variations**: NDVI values naturally vary seasonally. Effective feature engineering will be key to extracting meaningful trends from these time series.
+### Files:
+- `hacktrain.csv`: Training data (with labels)
+- `hacktest.csv`: Test data (no labels)
 
-    **Important Note:** The training data (`hacktrain.csv`) and the public leaderboard test data (`hacktest.csv`, 89% of it) contain noisy observations. However, the **private leaderboard data** (the remaining 11% of `hacktest.csv`) is **clean and free of noise**. This design will evaluate how well your model generalizes beyond noisy training conditions to real-world clean data.
+Each row consists of:
+- `ID`: Unique identifier
+- `class`: Land cover type (only in train)
+- `27 NDVI columns`: Timestamps (e.g., `20150720_N`)
 
------
+> 🧪 **Note:** Test set contains:
+> - **89% noisy** samples → used for **public leaderboard**
+> - **11% clean** samples → used for **private leaderboard**
 
-## 📊 Dataset Description
+---
 
-Each row in the dataset provides the following information:
+## 🧪 Approach & Methodology
 
-  * **`class`**: The ground truth label of the land cover type. Possible classes are: `{Water, Impervious, Farm, Forest, Grass, Orchard}`
-  * **`ID`**: A unique identifier for each sample.
-  * **27 NDVI Time Points**: Columns labeled in the format `YYYYMMDD_N` (e.g., `20150720_N`, `20150602_N`). These represent NDVI values collected on different dates, forming a time series that illustrates vegetation dynamics for each location.
+### 🔧 1. Preprocessing
+- **Missing Values**:
+  - Imputed using **median** per column.
+- **Outlier Removal**:
+  - Filtered using **IQR-based method** to reduce noise from clouds.
+- **Feature Engineering**:
+  - Statistical features: `mean`, `std`, `min`, `max`, `skew`, `kurtosis`
+  - Temporal patterns: Early-season vs. late-season NDVI difference
+  - NDVI signal features:
+    - Count of values < 0
+    - NDVI range (`max - min`)
 
-### Files
+---
 
-You will be working with two primary files:
+## ⚙️ Model Details
 
-  * **`hacktrain.csv`**: This is your training dataset. It contains noise due to inaccurate NDVI calculations in the presence of clouds.
-  * **`hacktest.csv`**: This dataset will be used to test your model. As mentioned, 89% of it contains noise (for the public leaderboard), and 11% is clean (for the private leaderboard evaluation).
+- **Algorithm**: Logistic Regression (One-vs-Rest)
+- **Library**: `scikit-learn`
+- **Scaler**: `StandardScaler`
+- **Regularization**: L2 (Ridge)
+- **Validation**:
+  - **5-fold Stratified Cross-Validation**
+  - Averaged accuracy across folds
 
-### Data Download
+---
 
-You can download the dataset directly from Kaggle using the following command in your terminal or Kaggle Notebook:
+## 📤 Submission Format
 
-```bash
-kaggle competitions download -c summer-analytics-mid-hackathon
-```
-
-*Make sure you have the Kaggle API installed and configured.*
-
------
-
-## ⚙️ Rules & Evaluation
-
-### Model Constraint
-
-  * You are strictly required to use **Logistic Regression** only. Multiclass classification is expected.
-
-### Preprocessing
-
-  * You are encouraged to perform **denoising, imputation, and feature engineering** to improve your model's performance.
-
-### Leaderboard
-
-  * **Public Leaderboard (89% of test data)**: Provides immediate feedback on your submission's performance.
-  * **Private Leaderboard (11% of test data)**: This will determine your final ranking and is designed to prevent overfitting to the noisy public data.
-
-### Evaluation Metric
-
-  * Submissions will be evaluated based on the **accuracy score** of the predicted class.
-
-### Submission Format
-
-Your submission file should be a CSV with two columns: `ID` and `class`.
-
-Example:
+Final predictions were submitted as a CSV file:
 
 ```csv
 ID,class
 1,water
-2,water
+2,impervious
 3,grass
-4,impervious
-..
-```
-
------
-
-## 🚀 Submissions
-
-You can make multiple submissions. The evaluated submission with the **best Private Score** will be used for your final ranking.
-
-  * You can select up to 2 submissions to be evaluated for your final leaderboard score.
-  * Ensure your submission file adheres strictly to the specified format.
-
------
-
-Good luck, and happy hacking\! If you have any questions during the hackathon, please refer to the Kaggle competition page for discussions or announcements.
-
------
+...
